@@ -5,9 +5,7 @@ import 'package:login_signin/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 class Homescreen extends StatefulWidget {
-  final String accessToken;
 
-  const Homescreen({required this.accessToken});
 
   
   

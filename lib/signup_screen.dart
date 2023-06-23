@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:login_signin/api/api_client.dart';
 import 'package:login_signin/homescreen.dart';
 import 'package:login_signin/login_screen.dart';
@@ -15,6 +16,8 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
 final _formKey = GlobalKey<FormState>();
   bool passToggle = true;
+  String email = '';
+  String password = '';
   final emailController = TextEditingController();
     final passController = TextEditingController();
         final nameController = TextEditingController();
@@ -116,11 +119,11 @@ width: 200,
                   prefixIcon:Icon(Icons.email),
                     ),
 
-   validator: (value){
-   if  (value!.isEmpty) {
+   validator: (Value){
+   if  (Value!.isEmpty) {
                      return "Please enter your email";
                    }
-                   bool emailValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value) ;
+                   bool emailValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(Value) ;
                    
                    if(!emailValid){
             return "Please enter a valid email address";
@@ -160,13 +163,13 @@ width: 200,
                     
                   )
                     ),
- validator: (value){
+ validator: (Value){
                             
-                     if (value!.isEmpty) {
+                     if (Value!.isEmpty) {
                  
                        return 'Please enter your password';
                      }
-                     if (value.length  <8) {
+                     if (Value.length  <8) {
                        return 'Password must be at least 8 characters long';
                      }
                          return null;
@@ -182,14 +185,12 @@ width: 200,
 if(_formKey.currentState!.validate()){
 
   print("Data added Successfully");
-  emailController.clear();
-  passController.clear();
-   registerUsers();
-    // Navigator.push(
-    //      context,
-    //       MaterialPageRoute(
-    //        builder: (context) => Homescreen(),
-    
+  
+   Navigator.push(
+         context,
+          MaterialPageRoute(
+           builder: (context) => Homescreen(),
+          ));
         
         FocusScope.of(context).unfocus();
       } else {

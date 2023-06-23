@@ -24,47 +24,60 @@ class ApiClient {
 
   Future< dynamic> loginUser(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('https://demo.trainingzone.in/api/login'),
-        headers: {
-          'Content-Type': 'application/json',
-            'Accept': 'application/json',
+      var headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer 11|XQVyVZuG9yoxLCW0PNiv4GxixnIXpf1enU887YUa'
+};
+var request = http.Request('POST', Uri.parse('https://demo.trainingzone.in/api/login'));
+request.body = json.encode({
+  "email": "ajay121@mail.com",
+  "password": "Test@123"
+});
+request.headers.addAll(headers);
 
-        },
-        body: jsonEncode({
-          "email" :"ajay121@mail.com",
-          "password": "Test@123"
-        }),
-      );
-      //http.StreamedResponse request = await Request.s;
+http.StreamedResponse response = await request.send();
 
-      if (response.statusCode == 200) {
- 
-      return jsonDecode(response.body);
-      }
-    } catch (e) {
+if (response.statusCode == 200) {
+  print(await response.stream.bytesToString());
+}
+else {
+  print(response.reasonPhrase);
+}
+} catch (e) {
             return e.toString();
 
     }
   }
 
+
   Future<dynamic> getUserProfileData(String accessToken) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://demo.trainingzone.in/api/user/me'),
-        headers: {
-          'Content-Type': 'application/json',
-            'Accept': 'application/json',
+      var headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer $accessToken'};
+var request = http.Request('GET', Uri.parse('https://demo.trainingzone.in/api/user/me'));
+request.body = json.encode({
+  "email": "ajay121@mail.com",
+  "password": "Test@123"
+});
+request.headers.addAll(headers);
 
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
-      return jsonDecode(response.body);
-    } catch (e) {
-      return e.toString();
+http.StreamedResponse response = await request.send();
+
+if (response.statusCode == 200) {
+  print(await response.stream.bytesToString());
+}
+else {
+  print(response.reasonPhrase);
+}
+} catch (e) {
+            return e.toString();
+
     }
-  }
 
+  }
   Future<dynamic> updateUserProfile({
     required String accessToken,
     required Map<String, dynamic> data

@@ -68,26 +68,26 @@ final _formKey = GlobalKey<FormState>();
         backgroundColor: Colors.green.shade300,
       ));
 
-      dynamic res  = await _apiClient.loginUser(
+      dynamic response  = await _apiClient.loginUser(
        emailController.text,
        passController.text
       );
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-      if (res != null) {
-  var accessToken = res['access_token'];
+  var accessToken = response['access_token'];
     if (accessToken != null) {
         dynamic userProfileData = await _apiClient.getUserProfileData(accessToken);
 
-// Map<String, dynamic> userData = {
+Map<String, dynamic> userData = {
      
-//       "email": "ajay121@mail.com",
-//   "password": "Test@123"
-//     };
+      "email": "ajay121@mail.com",
+  "password": "Test@123"
+    };
     dynamic updateResponse = await _apiClient.updateUserProfile(
       accessToken: accessToken,
       data: userProfileData,
+      
     );
 
     // Handle the update response accordingly
@@ -124,7 +124,7 @@ final _formKey = GlobalKey<FormState>();
     ),
   );
 }
-    }
+    
       
   } 
       
