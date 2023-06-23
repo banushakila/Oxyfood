@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:login_signin/api/api_client.dart';
 import 'package:login_signin/homescreen.dart';
+import 'package:login_signin/login_screen.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -15,9 +18,43 @@ final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
     final passController = TextEditingController();
         final nameController = TextEditingController();
+        final ApiClient _apiClient = ApiClient();
+  bool _showPassword = false;
 
 
+  Future<void> registerUsers() async {
+    if (_formKey.currentState!.validate()) {
+          final BuildContext context = this.context; 
 
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Processing Data'),
+        backgroundColor: Colors.green.shade300,
+      ));
+
+      Map<String, dynamic> userData = {
+        "email" : emailController.text,
+        "password" : passController.text,
+       'name' : nameController
+
+
+      };
+      dynamic res = await _apiClient.registerUser(userData);
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (res['ErrorCode'] == null) {
+        
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const Loginscreen()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${res['Message']}'),
+          backgroundColor: Colors.red.shade300,
+        ));
+      }
+    }
+  }
+    
 
   @override
   Widget build(BuildContext context) {
@@ -143,15 +180,17 @@ width: 200,
       InkWell(
         onTap: (){
 if(_formKey.currentState!.validate()){
+
   print("Data added Successfully");
   emailController.clear();
   passController.clear();
-   Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homescreen(),
-          ),
-        );
+   registerUsers();
+    // Navigator.push(
+    //      context,
+    //       MaterialPageRoute(
+    //        builder: (context) => Homescreen(),
+    
+        
         FocusScope.of(context).unfocus();
       } else {
         print("Invalid login details");
@@ -183,29 +222,6 @@ if(_formKey.currentState!.validate()){
       
         ),
       ),
-
-// Row( mainAxisAlignment: MainAxisAlignment.center,
-// children: [
-//   Text( " Don't have an account?",
-//   style : TextStyle(
-//     fontSize: 17,
-//   ),),
-
-//   TextButton(
-//       onPressed: () {},
-//         // Navigator.push(
-//         //   context,
-//         //   MaterialPageRoute(builder: (context) => Homescreen()),
-       
-//         child: Text("Sign Up",
-//         style : TextStyle(
-//           fontSize: 19,
-//           fontWeight: FontWeight.bold,
-//         )),
-
-// )],
-
-
 
   ],
   )

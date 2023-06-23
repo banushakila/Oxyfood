@@ -1,9 +1,11 @@
 // ignore_for_file: camel_case_types, duplicate_import
 //import 'dart:ffi';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:login_signin/api/api_client.dart';
 //import 'package:login_signin/homescreen.dart';
 //import 'package:login_signin/homescreen2.dart';
 //import 'package:login_signin/homescreen3.dart';
@@ -26,30 +28,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'utils/api_endpoints.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-
-
-
-
-
+  import 'package:login_signin/homescreen.dart';
   
-
-
-
-
-
 class Loginscreen extends StatefulWidget {
-  const Loginscreen({super.key});
+        const Loginscreen({Key? key}) : super(key: key);
+  
+  
   
 
   @override
   State<Loginscreen> createState() => _LoginscreenState();
 }  
 
+
     class _LoginscreenState extends State<Loginscreen>{
 
-// final ApiClient _apiClient = ApiClient();
-//final storage = new FlutterSecureStorage();
+      
+
+
 
   
 final _formKey = GlobalKey<FormState>();
@@ -60,49 +56,78 @@ final _formKey = GlobalKey<FormState>();
 
     String email = '';
   String password = '';
-  final token = '35|6rgCG3BygX8TH9OOpIk3xSItTeLWl5tfm3BbyUPH';
+  final ApiClient _apiClient = ApiClient();
+  bool _showPassword = false;
+   final String accessToken = "";
 
 
-Future<dynamic> loginUsers() async {
-  try{
+  Future<void> login() async {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Processing Data'),
+        backgroundColor: Colors.green.shade300,
+      ));
 
-    // if (_formKey.currentState!.validate()) 
-    
-    var headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Authorization': 'Bearer $token'
-};
-var request = http.Request('POST', Uri.parse('https://demo.trainingzone.in/api/login'));
-request.body = json.encode({
-  "email": "ajay121@mail.com",
-  "password": "Test@123"
-  
-});
-request.headers.addAll(headers);
+      dynamic res  = await _apiClient.loginUser(
+       emailController.text,
+       passController.text
+      );
 
-http.StreamedResponse response = await request.send();
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-if (response.statusCode == 200) {
-  print(await response.stream.bytesToString());
-  Navigator.pushAndRemoveUntil(
-  context,
-  MaterialPageRoute(builder: (context,) => WebViewPage(url: 'https://demo.trainingzone.in/api/user/me')),
-  (Route<dynamic> route) => false,
-);
+      if (res != null) {
+  var accessToken = res['access_token'];
+    if (accessToken != null) {
+        dynamic userProfileData = await _apiClient.getUserProfileData(accessToken);
+
+// Map<String, dynamic> userData = {
+     
+//       "email": "ajay121@mail.com",
+//   "password": "Test@123"
+//     };
+    dynamic updateResponse = await _apiClient.updateUserProfile(
+      accessToken: accessToken,
+      data: userProfileData,
+    );
+
+    // Handle the update response accordingly
+    if (updateResponse != null) {
+      // Update successful
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('User profile updated successfully'),
+          backgroundColor: Colors.green.shade300,
+        ),
+      );
+    } else {
+      // Update failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Failed to update user profile. Please try again.'),
+          backgroundColor: Colors.red.shade300,
+        ),
+      );
+    }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Error: Access token is missing'),
+        backgroundColor: Colors.red.shade300,
+      ),
+    );
+  }
+} else {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Error: Failed to login. Please try again.'),
+      backgroundColor: Colors.red.shade300,
+    ),
+  );
 }
-else {
-  print(response.reasonPhrase);
-}
-  
- }catch (e) {
-   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-     content: Text('Error: $e'),
-     backgroundColor: Colors.red.shade300,     ));   
-     }
-}
-
-
+    }
+      
+  } 
+      
 @override
 
  Widget build(BuildContext context) {
@@ -214,7 +239,7 @@ width: 200,
    onPressed:
    () async {
    if( _formKey.currentState!.validate()){
-    loginUsers();
+    login();
 
    } else {
   print("invalid login");
@@ -283,30 +308,8 @@ children: [
  
 
      );
-     
-
- }
- 
-      } 
-      
-  
-class WebViewPage extends StatelessWidget {
-  final String url;
-
-  const WebViewPage({Key? key, required this.url}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Web View Page'),
-      ),
-      body: InAppWebView(
-                initialFile: 'assets/login.php',
-
-
-        initialUrlRequest: URLRequest(url: Uri.parse('https://demo.trainingzone.in' + url)),
-      ),
-    );
+     }
   }
-}
+  
+
+      
