@@ -1,12 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:login_signin/api/api_client.dart';
+import 'package:login_signin/login_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class Homescreen extends StatefulWidget {
+  final String accessToken;
+
+  const Homescreen({required this.accessToken});
+
+  
+  
+  // final String accessToken = "";
+  
+
 
   @override
   State<Homescreen> createState() => _HomescreenState();
+  
 }
 
 class _HomescreenState extends State<Homescreen> {
+  
+
+//   final ApiClient _apiClient = ApiClient();
+
+//   Future<Map<String, dynamic>> getUserData() async {
+//     dynamic userRes;
+//     userRes = await _apiClient.getUserProfileData(widget.accessToken);
+//     return userRes;
+//   }
+
+//   Future<void> logout() async {
+//   final BuildContext context = this.context; // Store the BuildContext
+
+//   await _apiClient.logout(widget.accessToken);
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(builder: (context) => const Loginscreen()),
+//   );
+// }
+  
   @override
+  
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -58,3 +94,5 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 }
+
+
