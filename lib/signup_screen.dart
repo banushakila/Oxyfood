@@ -133,6 +133,9 @@ width: 200,
                     
                    return null;
                           },
+                          onSaved: (value) {
+                  email = value!;
+                },
 
 
 
@@ -174,32 +177,34 @@ width: 200,
                      }
                          return null;
                           },
+                          onSaved: (value) {
+                  password = value!;
+                },
 
 
                     ),
-      
+  
 
       SizedBox(height: 60),
+      
       InkWell(
         onTap: (){
 if(_formKey.currentState!.validate()){
-
   print("Data added Successfully");
-  
+  emailController.clear();
+  passController.clear();
    Navigator.push(
-         context,
+          context,
           MaterialPageRoute(
-           builder: (context) => Homescreen(),
-          ));
-        
+            builder: (context) => Homescreen(),
+          ),
+        );
         FocusScope.of(context).unfocus();
       } else {
         print("Invalid login details");
       }
-  
-  
-  
-        },
+        
+    },
         child: Container(
           height: 50,
           decoration: BoxDecoration(
@@ -221,8 +226,9 @@ if(_formKey.currentState!.validate()){
           
 
       
-        ),
-      ),
+        )),
+        
+      
 
   ],
   )
